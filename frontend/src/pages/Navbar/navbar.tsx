@@ -130,8 +130,9 @@ export function Navbar() {
     
   getlanguageselector(selectedPatient,selectedLanguage);
 
+  const url = import.meta.env.VITE_API_BASE_URL;
   const NOTIFICATION_STREAM_URL =
-  `http://10.11.7.95:3000/patient-notifications/stream/${selectedPatient}`;
+  `${url}/patient-notifications/stream/${selectedPatient}`;
 
 
 // ------------------------------------
@@ -177,8 +178,6 @@ useEffect(() => {
       try {
         const notificationData: Notification = JSON.parse(event.data);
         
-        // Always listen, but only process and speak if the IDs match
-        // Use the state variable existingDid here:
         if (existingDid && notificationData.patientId === existingDid) {
           console.log(`✅ MATCH: Notification for patient ${existingDid} processed.`);
           
@@ -217,7 +216,7 @@ useEffect(() => {
   // Function to fetch data on component mount
   useEffect(() => {
     const fetchLanguages = async () => {
-      try {
+      try { 
         setIsLoading(true);
         setError(null);
         // Note: The original file had a relative import for this function
