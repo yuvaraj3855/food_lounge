@@ -30,9 +30,21 @@ GEMMA_MODEL=gemma3:4b
 # Alternative: GEMMA_MODEL=gemma3:27b (for more powerful analysis)
 BGE_MODEL=bge-m3:latest
 
-# Whisper API Configuration (for STT - Speech to Text)
+# STT Configuration (Hybrid Approach)
+# - Whisper API for English
+# - IndicConformer for 22 Indian languages
+
+# IndicConformer (for Indian languages)
+INDIC_CONFORMER_MODEL=ai4bharat/indic-conformer-600m-multilingual
+USE_GPU=false  # Set to true if GPU available
+
+# Whisper API (for English)
 WHISPER_API_URL=http://10.10.110.24:40004
 WHISPER_MODEL=whisper-large-v3
+
+# Hugging Face Token (required for accessing IndicConformer model)
+# Get your token from: https://huggingface.co/settings/tokens
+HF_TOKEN=your_huggingface_token_here
 
 # Sarvam Base URL (for TTS and Translation)
 # Same URL for both Sarvam TTS and Translation services

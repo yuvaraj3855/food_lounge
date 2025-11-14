@@ -46,3 +46,10 @@ class TranslationResponse(BaseModel):
     source_language: str
     target_language: str
 
+
+class VoiceTranscribeWithTranslationResponse(BaseModel):
+    original_text: str  # Text in original language (from STT)
+    translated_text: str  # Translated text
+    source_language: str  # Language of the audio
+    target_language: str  # Target translation language
+

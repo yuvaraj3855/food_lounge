@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 import os
 from typing import List
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from models.schemas import (
     SkipDoseRequest,
@@ -11,7 +15,8 @@ from models.schemas import (
     VoiceSynthesizeRequest,
     VoiceSynthesizeResponse,
     TranslationRequest,
-    TranslationResponse
+    TranslationResponse,
+    VoiceTranscribeWithTranslationResponse
 )
 from services.medgemma_service import MedGemmaService
 from services.bge_service import BGEService
@@ -88,21 +93,39 @@ async def analyze_skip(request: SkipDoseRequest):
 @app.post("/voice/transcribe", response_model=VoiceTranscribeResponse)
 async def transcribe_audio(
     file: UploadFile = File(...),
-    language: str = "hi"
+    language: str = "hi",
+    decoding: str = "ctc"
 ):
     """
-    Transcribe audio file (WAV) to text using Sarvam STT
+    Transcribe audio file (WAV) to text using hybrid approach:
+    - Whisper API for English (en)
+    - IndicConformer for 22 Indian languages (hi, ta, te, etc.)
+    
+    ⚠️  IMPORTANT: The 'language' parameter MUST match the actual language in the audio!
+    If you pass language="hi" but the audio is in Tamil, accuracy will be poor.
+    
+    Args:
+        file: Audio file (WAV, FLAC, MP3, etc.)
+        language: Language code (en, hi, ta, te, etc.) - MUST match audio language
+        decoding: "ctc" or "rnnt" for IndicConformer (default: "ctc", only used for Indian languages)
+    
+    Returns:
+        {text, language}
     """
     try:
         # Read audio file
         audio_data = await file.read()
         
         # Validate file type
-        if not file.filename.endswith(('.wav', '.mp3', '.m4a', '.ogg')):
-            raise HTTPException(status_code=400, detail="Unsupported audio format. Please upload WAV, MP3, M4A, or OGG")
+        if not file.filename.endswith(('.wav', '.mp3', '.m4a', '.ogg', '.flac')):
+            raise HTTPException(status_code=400, detail="Unsupported audio format. Please upload WAV, MP3, M4A, OGG, or FLAC")
         
-        # Transcribe
-        result = stt_service.transcribe_audio(audio_data, language)
+        # Validate decoding method
+        if decoding not in ["ctc", "rnnt"]:
+            decoding = "ctc"
+        
+        # Transcribe using IndicConformer
+        result = stt_service.transcribe_audio(audio_data, language, decoding)
         
         if not result["text"]:
             raise HTTPException(status_code=500, detail="Transcription failed or returned empty result")
@@ -161,6 +184,61 @@ async def get_drug(drug_name: str):
     if not drug:
         raise HTTPException(status_code=404, detail=f"Drug '{drug_name}' not found")
     return drug
+
+
+@app.post("/voice/transcribe-and-translate", response_model=VoiceTranscribeWithTranslationResponse)
+async def transcribe_and_translate(
+    file: UploadFile = File(...),
+    source_language: str = "hi",
+    target_language: str = "English",
+    decoding: str = "ctc"
+):
+    """
+    Transcribe audio and translate to target language in one call
+    Example: Hindi speech → Hindi text → English text
+    
+    Args:
+        file: Audio file (WAV, FLAC, etc.)
+        source_language: Language of the audio (hi, ta, te, etc.)
+        target_language: Target language for translation (English, Hindi, Tamil, etc.)
+        decoding: "ctc" or "rnnt" for STT (default: "ctc")
+    
+    Returns:
+        {original_text, translated_text, source_language, target_language}
+    """
+    try:
+        # Step 1: Transcribe audio to text (in source language)
+        audio_data = await file.read()
+        
+        if not file.filename.endswith(('.wav', '.mp3', '.m4a', '.ogg', '.flac')):
+            raise HTTPException(status_code=400, detail="Unsupported audio format")
+        
+        if decoding not in ["ctc", "rnnt"]:
+            decoding = "ctc"
+        
+        stt_result = stt_service.transcribe_audio(audio_data, source_language, decoding)
+        original_text = stt_result["text"]
+        
+        if not original_text:
+            raise HTTPException(status_code=500, detail="Transcription failed or returned empty result")
+        
+        # Step 2: Translate text to target language
+        translation_result = translation_service.translate(
+            text=original_text,
+            target_language=target_language,
+            source_language=source_language
+        )
+        
+        return VoiceTranscribeWithTranslationResponse(
+            original_text=original_text,
+            translated_text=translation_result["text"],
+            source_language=source_language,
+            target_language=target_language
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error in transcribe and translate: {str(e)}")
 
 
 @app.post("/translate", response_model=TranslationResponse)
