@@ -1,0 +1,39 @@
+services:
+  ai-service:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    image: ai-service:food-lounge
+    container_name: ai-service-food-lounge
+    env_file:
+      - ai/.env
+    networks:
+      - food-lounge-net
+    restart: unless-stopped
+
+#  backend-service:
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    image: backend-service:food-lounge
+#    container_name: backend-service-food-lounge
+#    env_file:
+#      - backend/.env
+#    networks:
+#      - food-lounge-net
+#    restart: unless-stopped
+#
+#  frontend-service:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    image: frontend-service:food-lounge
+#    container_name: frontend-service-food-lounge
+#    env_file:
+#      - frontend/.env
+#    networks:
+#      - food-lounge-net
+#    restart: unless-stopped
+
+networks:
+  food-lounge-net:
