@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedMentor.AI - Hackathon Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 15px;
+            padding: 60px;
+            margin: 30px 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            min-height: 600px;
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 25px 0 15px 0;
+        }
+
+        .title-slide {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title-slide h1 {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .title-slide .subtitle {
+            font-size: 2em;
+            color: #764ba2;
+            margin-bottom: 50px;
+        }
+
+        .title-slide .domain {
+            font-size: 1.5em;
+            color: #666;
+            margin-top: 50px;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            min-width: 150px;
+        }
+
+        .stat-box .number {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.4);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+
+        .checkmark {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .roadmap-phase {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .roadmap-phase h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>🏥 MedMentor.AI</h1>
+            <div class="subtitle">AI-Driven Medication Adherence & Risk Alert System</div>
+            <div class="domain">Hackathon 2025 | MedTech Domain</div>
+        </div>
+
+        <!-- Slide 2: Problem -->
+        <div class="slide">
+            <h2>💊 The Problem</h2>
+            <h3>Medication Non-Adherence Crisis</h3>
+            <ul>
+                <li><strong>The Challenge:</strong> Elderly and chronic patients often forget or skip critical medicines</li>
+                <li><strong>Heart and diabetes medications</strong> require strict adherence</li>
+                <li><strong>Missed doses</strong> can lead to serious health complications</li>
+            </ul>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="number">125K+</div>
+                    <div class="label">Deaths Annually</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">$100B+</div>
+                    <div class="label">Healthcare Costs</div>
+                </div>
+            </div>
+            <p style="margin-top: 30px; font-size: 1.2em; font-style: italic; color: #666;">
+                "A 65-year-old diabetic patient skips Furosemide 3 times in a week. Without early detection, this could lead to fluid accumulation in lungs and emergency hospitalization."
+            </p>
+        </div>
+
+        <!-- Slide 3: Solution -->
+        <div class="slide">
+            <h2>🤖 Our Solution</h2>
+            <h3>MedMentor.AI</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>✅ Detects Missed Doses</h4>
+                    <p>Instant detection when patients skip medications</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ AI Risk Analysis</h4>
+                    <p>Evaluates risk using medical AI models</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Real-Time Alerts</h4>
+                    <p>Instant doctor notifications with actionable insights</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Multilingual Support</h4>
+                    <p>23 languages for accessibility</p>
+                </div>
+            </div>
+            <h3 style="margin-top: 30px;">Key Innovation</h3>
+            <ul>
+                <li>Real-time risk analysis using <span class="highlight">MedGemma AI</span></li>
+                <li>Instant doctor alerts via <span class="highlight">Server-Sent Events</span></li>
+                <li>Multilingual support for <span class="highlight">23 languages</span></li>
+                <li>Voice interface for <span class="highlight">accessibility</span></li>
+            </ul>
+        </div>
+
+        <!-- Slide 4: Patient Flow -->
+        <div class="slide">
+            <h2>👤 How It Works - Patient Flow</h2>
+            <div class="feature-card" style="margin: 20px 0;">
+                <h3>Step 1: Patient Records Missed Dose</h3>
+                <ul>
+                    <li>Simple button click: "Missed Dose ❌"</li>
+                    <li>Or voice query: "मैंने दवा छोड़ दी" (I missed my medicine)</li>
+                </ul>
+            </div>
+            <div class="feature-card" style="margin: 20px 0;">
+                <h3>Step 2: AI Risk Analysis</h3>
+                <ul>
+                    <li>System analyzes: Drug name, number of skips, patient age, conditions</li>
+                    <li>MedGemma AI evaluates risk level (High/Medium/Low)</li>
+                    <li>Provides explanation and recommendations</li>
+                </ul>
+            </div>
+            <div class="feature-card" style="margin: 20px 0;">
+                <h3>Step 3: Real-Time Alert</h3>
+                <ul>
+                    <li>Doctor receives instant alert on dashboard</li>
+                    <li>Patient gets translated warning in their language</li>
+                    <li>Both receive AI-generated risk explanation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Doctor Flow -->
+        <div class="slide">
+            <h2>👨‍⚕️ How It Works - Doctor Flow</h2>
+            <h3>Real-Time Monitoring</h3>
+            <ul>
+                <li>Live alert stream via <span class="highlight">Server-Sent Events</span></li>
+                <li>Patient list with color-coded risk levels:
+                    <ul>
+                        <li>🔴 <strong>High Risk</strong></li>
+                        <li>🟡 <strong>Medium Risk</strong></li>
+                        <li>🟢 <strong>Low Risk</strong></li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>AI-Powered Insights</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Risk Assessment</h4>
+                    <p>High/Medium/Low classification</p>
+                </div>
+                <div class="feature-card">
+                    <h4>AI Explanations</h4>
+                    <p>Detailed risk analysis</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Drug Recommendations</h4>
+                    <p>Similar drug suggestions</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Actionable Suggestions</h4>
+                    <p>What doctors should do</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Architecture -->
+        <div class="slide">
+            <h2>🏗️ Technical Architecture</h2>
+            <div class="architecture-diagram">
+┌─────────────────────────────────────┐
+│   Patient App (React + Vite)        │
+│   - Missed Dose Button              │
+│   - Voice Query Interface           │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│   NestJS Backend (Fastify)          │
+│   - Patient Service                 │
+│   - Alert Service (SSE)             │
+│   - PostgreSQL Database              │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│   FastAPI AI Service                │
+│   - MedGemma (Risk Analysis)        │
+│   - BGE-M3 (Drug Similarity)        │
+│   - Hybrid STT (23 languages)       │
+│   - Translation Service              │
+└─────────────────────────────────────┘
+            </div>
+            <h3>Key Technologies</h3>
+            <div class="tech-stack">
+                <div class="tech-item">NestJS + Fastify</div>
+                <div class="tech-item">PostgreSQL</div>
+                <div class="tech-item">FastAPI</div>
+                <div class="tech-item">MedGemma AI</div>
+                <div class="tech-item">BGE-M3</div>
+                <div class="tech-item">Server-Sent Events</div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Innovation -->
+        <div class="slide">
+            <h2>💡 Innovation Highlights</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>1. Hybrid AI Approach</h4>
+                    <p>MedGemma + BGE-M3 for comprehensive analysis</p>
+                </div>
+                <div class="feature-card">
+                    <h4>2. Hybrid Speech-to-Text</h4>
+                    <p>Whisper (English) + IndicConformer (22 Indian languages)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>3. Multilingual Healthcare AI</h4>
+                    <p>23 languages with auto-translation</p>
+                </div>
+                <div class="feature-card">
+                    <h4>4. Real-Time Architecture</h4>
+                    <p>Event-driven with Server-Sent Events</p>
+                </div>
+                <div class="feature-card">
+                    <h4>5. Intelligent Drug Dataset</h4>
+                    <p>100 real drugs with smart search</p>
+                </div>
+                <div class="feature-card">
+                    <h4>6. Voice Interface</h4>
+                    <p>Accessible for low-literacy patients</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Impact -->
+        <div class="slide">
+            <h2>🎯 Impact on Healthcare</h2>
+            <h3>Target Population</h3>
+            <ul>
+                <li>Elderly patients (65+ years)</li>
+                <li>Chronic disease patients (diabetes, heart conditions)</li>
+                <li>Patients with complex medication regimens</li>
+            </ul>
+            <h3>Measurable Outcomes</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>✅ Reduces Non-Adherence</h4>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Prevents Hospitalizations</h4>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Enables Proactive Care</h4>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Early Intervention</h4>
+                </div>
+            </div>
+            <h3>Accessibility</h3>
+            <ul>
+                <li>Multilingual support removes language barriers</li>
+                <li>Voice interface for low-literacy patients</li>
+                <li>Simple UI for elderly users</li>
+            </ul>
+        </div>
+
+        <!-- Slide 9: Tech Stack -->
+        <div class="slide">
+            <h2>🛠️ Technology Stack</h2>
+            <h3>Backend</h3>
+            <ul>
+                <li>NestJS with Fastify adapter (high performance)</li>
+                <li>PostgreSQL with TypeORM</li>
+                <li>Server-Sent Events (SSE) for real-time</li>
+            </ul>
+            <h3>AI Service</h3>
+            <ul>
+                <li>FastAPI (Python)</li>
+                <li>MedGemma (Ollama) - Risk analysis</li>
+                <li>BGE-M3 (Ollama) - Drug embeddings</li>
+                <li>IndicConformer - Indian language STT</li>
+                <li>Whisper API - English STT</li>
+                <li>Sarvam API - Translation & TTS</li>
+            </ul>
+            <h3>Frontend</h3>
+            <ul>
+                <li>React + Vite + Tailwind CSS</li>
+                <li>TanStack Router</li>
+                <li>Real-time SSE integration</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: Features -->
+        <div class="slide">
+            <h2>✨ Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>✅ Real-Time Risk Analysis</h4>
+                    <p>Instant AI-powered risk assessment with High/Medium/Low classification</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Doctor Dashboard</h4>
+                    <p>Live alert stream with patient list and risk indicators</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Patient Panel</h4>
+                    <p>Simple dose recording, voice queries, medication history</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Multilingual Support</h4>
+                    <p>23 languages with auto-translation and voice interface</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Drug Intelligence</h4>
+                    <p>100 real pharmaceutical drugs with smart search</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Real-Time Alerts</h4>
+                    <p>Instant notifications for doctors and patients</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Demo -->
+        <div class="slide">
+            <h2>🎬 Demo Flow</h2>
+            <h3>Live Demonstration Scenario</h3>
+            <div class="feature-card" style="margin: 20px 0;">
+                <h4>Scenario:</h4>
+                <ol style="margin-left: 30px;">
+                    <li>Patient skips Furosemide (cardiac medication)</li>
+                    <li>System detects and analyzes risk</li>
+                    <li>AI evaluates: "High Risk - Fluid accumulation possible"</li>
+                    <li>Doctor receives instant alert</li>
+                    <li>Patient gets translated warning in Hindi</li>
+                    <li>Doctor responds with instructions</li>
+                </ol>
+            </div>
+            <h3>What You'll See:</h3>
+            <ul>
+                <li>Patient interface recording missed dose</li>
+                <li>Real-time AI risk analysis</li>
+                <li>Doctor dashboard showing live alert</li>
+                <li>Multilingual communication</li>
+                <li>Complete end-to-end flow</li>
+            </ul>
+        </div>
+
+        <!-- Slide 12: Status -->
+        <div class="slide">
+            <h2>✅ Implementation Status</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="number">95%</div>
+                    <div class="label">Complete</div>
+                </div>
+            </div>
+            <h3>Completed:</h3>
+            <ul>
+                <li><span class="checkmark">✅</span> Backend API (22 endpoints)</li>
+                <li><span class="checkmark">✅</span> AI Service (7 endpoints)</li>
+                <li><span class="checkmark">✅</span> Real-time alert system (SSE)</li>
+                <li><span class="checkmark">✅</span> Database integration (PostgreSQL)</li>
+                <li><span class="checkmark">✅</span> Drug dataset (100 drugs)</li>
+                <li><span class="checkmark">✅</span> Multilingual support (23 languages)</li>
+                <li><span class="checkmark">✅</span> Voice services (STT/TTS)</li>
+                <li><span class="checkmark">✅</span> Translation service</li>
+            </ul>
+            <h3>Ready for Demo:</h3>
+            <ul>
+                <li>All core features functional</li>
+                <li>Real-time alerts working</li>
+                <li>AI risk analysis operational</li>
+                <li>Multilingual support active</li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: Roadmap -->
+        <div class="slide">
+            <h2>🚀 Future Roadmap</h2>
+            <div class="roadmap-phase">
+                <h4>Phase 1: Enhanced Features (3-6 months)</h4>
+                <ul>
+                    <li>Medication scheduling and reminders</li>
+                    <li>Family member notifications</li>
+                    <li>Analytics dashboard for doctors</li>
+                    <li>Mobile app (iOS/Android)</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <h4>Phase 2: Advanced AI (6-12 months)</h4>
+                <ul>
+                    <li>Predictive analytics for adherence</li>
+                    <li>Personalized medication recommendations</li>
+                    <li>Integration with electronic health records (EHR)</li>
+                    <li>Machine learning for risk prediction</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <h4>Phase 3: IoT Integration (12-18 months)</h4>
+                <ul>
+                    <li>Smart pill dispensers</li>
+                    <li>Wearable device integration</li>
+                    <li>Automated dose detection</li>
+                    <li>Biometric monitoring</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 14: Impact Metrics -->
+        <div class="slide">
+            <h2>📊 Impact Metrics</h2>
+            <h3>Expected Impact</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Short-Term (6 months)</h4>
+                    <ul>
+                        <li>1,000+ patients</li>
+                        <li>50+ doctors</li>
+                        <li>30% reduction in missed doses</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Medium-Term (1 year)</h4>
+                    <ul>
+                        <li>10,000+ patients</li>
+                        <li>500+ doctors</li>
+                        <li>10+ hospital integrations</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Long-Term (2+ years)</h4>
+                    <ul>
+                        <li>National deployment</li>
+                        <li>Measurable reduction in deaths</li>
+                        <li>Cost savings in healthcare</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Social Impact</h4>
+                    <ul>
+                        <li>Improved quality of life</li>
+                        <li>Reduced healthcare burden</li>
+                        <li>Peace of mind for families</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Q&A -->
+        <div class="slide title-slide">
+            <h1>❓ Questions?</h1>
+            <div class="subtitle" style="margin-top: 50px;">Thank You!</div>
+            <div class="domain" style="margin-top: 50px;">
+                <p>GitHub: [Your GitHub Repo]</p>
+                <p>Email: [Your Email]</p>
+                <p>Demo: [Your Demo Link]</p>
+            </div>
+            <div style="margin-top: 50px; font-size: 1.2em;">
+                <p><strong>Key Takeaways:</strong></p>
+                <ul style="text-align: left; display: inline-block; margin-top: 20px;">
+                    <li>✅ Real-time AI-powered medication adherence monitoring</li>
+                    <li>✅ Multilingual support for accessibility</li>
+                    <li>✅ Life-saving potential through early intervention</li>
+                    <li>✅ Scalable architecture for future growth</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">15</span>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (n >= totalSlides) currentSlide = 0;
+            if (n < 0) currentSlide = totalSlides - 1;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
+
