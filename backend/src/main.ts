@@ -9,20 +9,28 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({
+      bodyLimit: 10 * 1024 * 1024, // 10MB limit
+    }),
   );
   
-  // Enable CORS
+  // Enable CORS - Allow all origins
   await app.register(require('@fastify/cors'), {
-    origin: true,
+    origin: (origin, callback) => {
+      // Allow all origins
+      callback(null, true);
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
-  // Register multipart for file uploads
-  await app.register(require('fastify-multipart'), {
+  // Register multipart for file uploads (must be registered before routes)
+  await app.register(require('@fastify/multipart'), {
     limits: {
       fileSize: 10 * 1024 * 1024, // 10MB limit
     },
+    attachFieldsToBody: false, // Don't attach to body, use request.file() instead
   });
 
   // Swagger Configuration

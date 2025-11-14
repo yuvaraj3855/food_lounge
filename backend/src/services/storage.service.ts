@@ -306,6 +306,7 @@ export class StorageService {
       risk_level: patient.risk_level,
       last_alert: patient.last_alert,
       doctor_id: patient.doctor_id,
+      language: patient.language,
       medication_details: patient.medications?.map((m) => ({
         drug_name: m.drug_name,
         dosage: m.dosage,
@@ -328,6 +329,7 @@ export class StorageService {
     patient.risk_level = dto.risk_level;
     patient.last_alert = dto.last_alert;
     patient.doctor_id = dto.doctor_id;
+    patient.language = dto.language || 'hi'; // Default to Hindi
     return patient;
   }
 

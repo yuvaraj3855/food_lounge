@@ -13,7 +13,7 @@ class DrugService:
         self.load_drugs()
 
     def load_drugs(self):
-        """Load drug dataset from JSON file"""
+        """Load drug dataset from JSON file, fallback to sample drugs if not found"""
         try:
             if os.path.exists(self.data_path):
                 with open(self.data_path, 'r', encoding='utf-8') as f:
@@ -25,12 +25,23 @@ class DrugService:
                         self.drugs = data["drugs"]
                     else:
                         self.drugs = []
+                
+                if len(self.drugs) > 0:
+                    print(f"✅ Loaded {len(self.drugs)} drugs from {self.data_path}")
+                    return
             else:
                 print(f"Warning: Drug dataset not found at {self.data_path}")
-                self.drugs = []
+            
+            # Fallback to sample drugs if dataset not found or empty
+            print("📋 Using sample drug data as fallback")
+            self.drugs = self._get_sample_drugs()
+            print(f"✅ Loaded {len(self.drugs)} sample drugs")
         except Exception as e:
             print(f"Error loading drugs: {e}")
-            self.drugs = []
+            # Fallback to sample drugs on error
+            print("📋 Using sample drug data as fallback due to error")
+            self.drugs = self._get_sample_drugs()
+            print(f"✅ Loaded {len(self.drugs)} sample drugs")
 
     def save_drugs(self):
         """Save drugs to JSON file"""

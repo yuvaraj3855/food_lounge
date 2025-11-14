@@ -62,6 +62,19 @@ class TTSService:
                 },
                 timeout=30
             )
+            
+            # Check response status
+            if response.status_code != 200:
+                error_msg = f"Sarvam TTS API returned status {response.status_code}"
+                try:
+                    error_detail = response.json()
+                    error_msg += f": {error_detail}"
+                except:
+                    error_msg += f": {response.text[:200]}"
+                print(f"Error in Sarvam TTS: {error_msg}")
+                # Fallback to gTTS
+                return self._synthesize_gtts(text, language)
+            
             response.raise_for_status()
             
             # Save audio file
@@ -74,6 +87,10 @@ class TTSService:
                 f.write(response.content)
             
             return audio_path
+        except requests.exceptions.RequestException as e:
+            print(f"Error in Sarvam TTS request: {e}")
+            # Fallback to gTTS
+            return self._synthesize_gtts(text, language)
         except Exception as e:
             print(f"Error in Sarvam TTS: {e}")
             # Fallback to gTTS
@@ -86,14 +103,32 @@ class TTSService:
             import hashlib
             import time
             
+            # Map language codes for gTTS (gTTS uses ISO 639-1 codes)
+            gtts_lang_map = {
+                "hi": "hi",  # Hindi
+                "ta": "ta",  # Tamil
+                "te": "te",  # Telugu
+                "kn": "kn",  # Kannada
+                "ml": "ml",  # Malayalam
+                "mr": "mr",  # Marathi
+                "gu": "gu",  # Gujarati
+                "bn": "bn",  # Bengali
+                "pa": "pa",  # Punjabi
+                "en": "en"   # English
+            }
+            gtts_lang = gtts_lang_map.get(language, "en")  # Default to English if not supported
+            
             audio_hash = hashlib.md5(f"{text}_{language}_{time.time()}".encode()).hexdigest()
             audio_path = os.path.join(self.output_dir, f"{audio_hash}.mp3")
             
-            tts = gTTS(text=text, lang=language, slow=False)
+            tts = gTTS(text=text, lang=gtts_lang, slow=False)
             tts.save(audio_path)
             
+            print(f"✅ gTTS fallback: Generated audio at {audio_path}")
             return audio_path
+        except ImportError:
+            raise Exception("gTTS is not installed. Please install it: poetry add gtts")
         except Exception as e:
             print(f"Error in gTTS: {e}")
-            raise Exception("TTS synthesis failed")
+            raise Exception(f"TTS synthesis failed: {str(e)}")
 

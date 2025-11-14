@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AIService } from '../ai/ai.service';
 import { StorageService } from '../services/storage.service';
+import { PatientNotificationsService } from '../services/patient-notifications.service';
 import {
   PatientDto,
   CreatePatientDto,
@@ -17,6 +18,7 @@ export class PatientService {
     private readonly aiService: AIService,
     private readonly eventEmitter: EventEmitter2,
     private readonly storage: StorageService,
+    @Optional() private readonly patientNotificationsService?: PatientNotificationsService,
   ) {
     // Initialize with sample patients for demo (async, but don't await in constructor)
     this.initializeSamplePatients().catch((err) => {
@@ -103,6 +105,7 @@ export class PatientService {
     const patient: PatientDto = {
       id,
       ...createPatientDto,
+      language: createPatientDto.language || 'hi', // Default to Hindi
       risk_level: undefined,
     };
     await this.storage.savePatient(patient);
@@ -121,15 +124,58 @@ export class PatientService {
     return savedPatient || patient;
   }
 
+  async updatePatient(
+    id: string,
+    updateDto: Partial<{
+      name: string;
+      age: number;
+      conditions: string[];
+      current_medications: string[];
+      doctor_id: string;
+      language: string;
+      medication_details?: MedicationDetailDto[];
+    }>,
+  ): Promise<PatientDto> {
+    const existingPatient = await this.storage.getPatient(id);
+    if (!existingPatient) {
+      throw new NotFoundException('Patient not found');
+    }
+
+    // Extract medication_details if provided
+    const medicationDetails = updateDto.medication_details;
+    const { medication_details, ...patientUpdateFields } = updateDto;
+
+    // Merge updates with existing patient data (excluding medication_details)
+    const updatedPatient: PatientDto = {
+      ...existingPatient,
+      ...patientUpdateFields,
+    };
+
+    await this.storage.savePatient(updatedPatient);
+
+    // Update medications if provided
+    if (medicationDetails !== undefined) {
+      await this.storage.saveMedications(id, medicationDetails);
+    }
+
+    // Update doctor assignment if doctor_id changed
+    if (updateDto.doctor_id && updateDto.doctor_id !== existingPatient.doctor_id) {
+      await this.storage.assignPatientToDoctor(id, updateDto.doctor_id);
+    }
+
+    const savedPatient = await this.storage.getPatient(id);
+    return savedPatient || updatedPatient;
+  }
+
   async recordDose(
     patientId: string,
     drugName: string,
     status: 'taken' | 'skipped',
     scheduledTime?: Date,
-  ): Promise<MedicationDoseDto> {
+  ): Promise<MedicationDoseDto | AlertDto> {
     const patient = await this.storage.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new NotFoundException('Patient not found');
     }
 
     const dose: MedicationDoseDto = {
@@ -144,11 +190,30 @@ export class PatientService {
 
     await this.storage.saveMedicationDose(dose);
 
-    // If skipped, create alert
+    // If skipped, trigger AI analysis and create alert (sent to doctor via SSE)
+    // Also send AI warning notification to patient via SSE
     if (status === 'skipped') {
-      await this.createSkipAlert(patientId, drugName, 1);
+      const alert = await this.createSkipAlert(patientId, drugName, 1);
+      
+      // Send AI warning notification to patient via SSE
+      if (this.patientNotificationsService) {
+        try {
+          await this.patientNotificationsService.sendAIWarning(
+            patientId,
+            drugName,
+            scheduledTime || new Date(),
+          );
+        } catch (error) {
+          console.error('Error sending patient notification:', error);
+          // Don't fail the request if notification fails
+        }
+      }
+      
+      // Return alert so frontend knows an alert was created
+      return alert as any;
     }
 
+    // If taken, just return the dose record
     return dose;
   }
 
@@ -227,41 +292,84 @@ export class PatientService {
     audioFile: { buffer: Buffer; mimetype: string; originalname: string },
     language: string = 'hi',
     patientId: string,
-  ): Promise<{ text: string; audio_url: string }> {
+  ): Promise<{ text: string; language: string }> {
     const patient = await this.storage.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new NotFoundException('Patient not found');
     }
 
-    // Transcribe audio
+    // Use patient's preferred language if available, otherwise use provided language
+    const preferredLanguage = patient.language || language;
+
+    // Transcribe audio using the language parameter (should match audio language)
     const transcription = await this.aiService.transcribeAudio(
       audioFile,
-      language,
+      language, // Use provided language for STT (must match audio)
     );
 
-    // For demo: Simple query handling
-    // In production, this would use AI to understand the query and generate response
-    let responseText = '';
-    const query = transcription.text.toLowerCase();
-
-    if (query.includes('miss') || query.includes('skip') || query.includes('forgot')) {
-      responseText = `आपने अपनी दवा छोड़ दी है। कृपया अपने डॉक्टर से संपर्क करें।`;
-    } else if (query.includes('side effect') || query.includes('नुकसान')) {
-      responseText = `कृपया अपने डॉक्टर से दवा के दुष्प्रभावों के बारे में पूछें।`;
-    } else {
-      responseText = `मैं आपकी मदद करने के लिए यहाँ हूँ। कृपया अपने डॉक्टर से परामर्श करें।`;
-    }
-
-    // Synthesize response
-    const audioUrl = await this.aiService.synthesizeSpeech(
-      responseText,
-      language,
+    // Generate response in patient's preferred language
+    const responseText = this.generateVoiceResponse(
+      transcription.text,
+      preferredLanguage,
     );
 
+    // Return text and language for frontend TTS
     return {
       text: responseText,
-      audio_url: audioUrl,
+      language: preferredLanguage,
     };
+  }
+
+  private generateVoiceResponse(query: string, language: string): string {
+    const queryLower = query.toLowerCase();
+
+    // Language-specific responses
+    const responses: Record<string, Record<string, string>> = {
+      hi: {
+        missed: 'आपने अपनी दवा छोड़ दी है। कृपया अपने डॉक्टर से संपर्क करें।',
+        sideEffect: 'कृपया अपने डॉक्टर से दवा के दुष्प्रभावों के बारे में पूछें।',
+        default: 'मैं आपकी मदद करने के लिए यहाँ हूँ। कृपया अपने डॉक्टर से परामर्श करें।',
+      },
+      en: {
+        missed: 'You have missed your medication. Please contact your doctor.',
+        sideEffect: 'Please ask your doctor about the side effects of your medication.',
+        default: 'I am here to help you. Please consult your doctor.',
+      },
+      ta: {
+        missed: 'நீங்கள் உங்கள் மருந்தை தவறவிட்டீர்கள். தயவுசெய்து உங்கள் மருத்துவரைத் தொடர்பு கொள்ளுங்கள்.',
+        sideEffect: 'தயவுசெய்து உங்கள் மருந்தின் பக்க விளைவுகள் பற்றி உங்கள் மருத்துவரிடம் கேளுங்கள்.',
+        default: 'நான் உங்களுக்கு உதவ இங்கே இருக்கிறேன். தயவுசெய்து உங்கள் மருத்துவரிடம் ஆலோசனை பெறுங்கள்.',
+      },
+      te: {
+        missed: 'మీరు మీ మందును మిస్ చేసారు. దయచేసి మీ వైద్యుడిని సంప్రదించండి.',
+        sideEffect: 'దయచేసి మీ మందు యొక్క దుష్ప్రభావాల గురించి మీ వైద్యుడిని అడగండి.',
+        default: 'నేను మీకు సహాయం చేయడానికి ఇక్కడ ఉన్నాను. దయచేసి మీ వైద్యుడిని సంప్రదించండి.',
+      },
+    };
+
+    // Get responses for the language, fallback to English if not available
+    const langResponses = responses[language] || responses.en;
+
+    // Determine response type based on query
+    if (
+      queryLower.includes('miss') ||
+      queryLower.includes('skip') ||
+      queryLower.includes('forgot') ||
+      queryLower.includes('छोड़') ||
+      queryLower.includes('மறந்து') ||
+      queryLower.includes('మిస్')
+    ) {
+      return langResponses.missed || langResponses.default;
+    } else if (
+      queryLower.includes('side effect') ||
+      queryLower.includes('नुकसान') ||
+      queryLower.includes('பக்க விளைவு') ||
+      queryLower.includes('దుష్ప్రభావం')
+    ) {
+      return langResponses.sideEffect || langResponses.default;
+    } else {
+      return langResponses.default;
+    }
   }
 }
 

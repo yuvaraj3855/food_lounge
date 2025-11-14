@@ -45,6 +45,13 @@ export class PatientDto {
   doctor_id?: string;
 
   @ApiProperty({
+    description: 'Preferred language code (e.g., hi, en, ta, te)',
+    example: 'hi',
+    required: false,
+  })
+  language?: string;
+
+  @ApiProperty({
     description: 'Detailed medication information',
     type: [MedicationDetailDto],
     required: false,
@@ -78,6 +85,13 @@ export class CreatePatientDto {
     required: false,
   })
   doctor_id?: string;
+
+  @ApiProperty({
+    description: 'Preferred language code (e.g., hi, en, ta, te)',
+    example: 'hi',
+    required: false,
+  })
+  language?: string;
 }
 
 export class CreatePatientWithMedicationsDto extends CreatePatientDto {

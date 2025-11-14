@@ -7,4 +7,5 @@ export * from './medication-detail.dto';
 export * from './message.dto';
 export * from './doctor.dto';
 export * from './doctor-dashboard.dto';
+export * from './patient-notification.dto';
 
