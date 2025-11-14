@@ -19,6 +19,7 @@ transformers = "^4.46.0"
 torch = "^2.5.1"
 torchaudio = "^2.5.1"
 onnxruntime = "^1.19.0"
+gtts = "^2.5.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"

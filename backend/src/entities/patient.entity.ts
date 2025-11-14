@@ -31,6 +31,9 @@ export class Patient {
   @Column({ name: 'doctor_id', nullable: true })
   doctor_id?: string;
 
+  @Column({ type: 'varchar', length: 10, nullable: true, default: 'hi' })
+  language?: string; // Language code (e.g., 'hi', 'en', 'ta', 'te')
+
   @ManyToOne(() => Doctor, (doctor) => doctor.patients)
   @JoinColumn({ name: 'doctor_id' })
   doctor?: Doctor;
