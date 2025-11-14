@@ -80,6 +80,20 @@ export class MessagesController {
     description: 'Accepts WAV audio file, transcribes it, and creates a message',
   })
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Audio file upload',
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'WAV audio file to transcribe',
+        },
+      },
+    },
+  })
   @ApiQuery({ name: 'patient_id', description: 'Patient ID' })
   @ApiQuery({ name: 'doctor_id', description: 'Doctor ID' })
   @ApiQuery({

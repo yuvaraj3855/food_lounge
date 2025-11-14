@@ -294,6 +294,20 @@ export class PatientController {
     description: 'Accepts WAV audio file, transcribes it, and returns TTS response',
   })
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Audio file upload',
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'WAV audio file to transcribe',
+        },
+      },
+    },
+  })
   @ApiQuery({
     name: 'language',
     required: false,
