@@ -749,6 +749,120 @@
             50% { opacity: 0.3; }
         }
 
+        /* Year-wise Graph Styles */
+        .year-graph-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .year-graph-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.2em, 2vw, 1.5em);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .year-graph {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 250px;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .year-bar {
+            flex: 1;
+            background: var(--gradient-1);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            animation: growBar 1.5s ease-out;
+            animation-fill-mode: both;
+            cursor: pointer;
+            display: block;
+            visibility: visible;
+        }
+
+        .year-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .year-bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(0.85em, 1.2vw, 1em);
+            color: #666;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .year-bar-value {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(0.9em, 1.3vw, 1.1em);
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(255,255,255,0.95);
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+        }
+
+        .graph-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            font-size: clamp(0.85em, 1.2vw, 1em);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--gradient-1);
+        }
+
+        @media (max-width: 768px) {
+            .year-graph {
+                height: 200px;
+                gap: 10px;
+            }
+            
+            .year-bar {
+                min-width: 35px;
+            }
+            
+            .graph-legend {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
+
         .stat-box {
             text-align: center;
             padding: 30px 40px;
@@ -1077,93 +1191,90 @@
                     <div class="tagline">Never Miss What Keeps You Alive</div>
                 </div>
             </div>
-            <h2>💊 The Problem<span class="real-time-badge">LIVE</span></h2>
+            <h2>💊 The Problem</h2>
             <h3>Medication Non-Adherence Crisis</h3>
             
-            <div class="insights-container">
-                <div class="insight-card">
-                    <h4>📊 Adherence Rate by Age Group</h4>
-                    <div class="chart-container">
-                        <div class="bar-chart">
-                            <div class="bar" style="--bar-height: 85%; height: 85%;">
-                                <div class="bar-value">85%</div>
-                                <div class="bar-label">18-40</div>
-                            </div>
-                            <div class="bar" style="--bar-height: 65%; height: 65%;">
-                                <div class="bar-value">65%</div>
-                                <div class="bar-label">41-60</div>
-                            </div>
-                            <div class="bar" style="--bar-height: 45%; height: 45%;">
-                                <div class="bar-value">45%</div>
-                                <div class="bar-label">61-75</div>
-                            </div>
-                            <div class="bar" style="--bar-height: 30%; height: 30%;">
-                                <div class="bar-value">30%</div>
-                                <div class="bar-label">75+</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="insight-card">
-                    <h4>🎯 Risk Distribution</h4>
-                    <div class="chart-container">
-                        <div class="pie-chart">
-                            <div class="pie-center">
-                                <div class="number">50%</div>
-                                <div class="label">High Risk</div>
-                            </div>
-                        </div>
-                        <div style="text-align: center; margin-top: 15px; font-size: 0.9em;">
-                            <div style="margin: 5px 0;"><span style="color: var(--danger);">●</span> High: 50%</div>
-                            <div style="margin: 5px 0;"><span style="color: var(--warning);">●</span> Medium: 20%</div>
-                            <div style="margin: 5px 0;"><span style="color: var(--success);">●</span> Low: 30%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="insight-card">
-                    <h4>📈 Missed Doses Trend</h4>
-                    <div class="chart-container">
-                        <div class="trend-line">
-                            <div class="trend-point" style="--point-height: 30px; width: 30px; height: 30px; margin-bottom: 10px;">
-                                <div class="trend-label">Mon</div>
-                            </div>
-                            <div class="trend-point" style="--point-height: 35px; width: 35px; height: 35px; margin-bottom: 5px;">
-                                <div class="trend-label">Tue</div>
-                            </div>
-                            <div class="trend-point" style="--point-height: 40px; width: 40px; height: 40px;">
-                                <div class="trend-label">Wed</div>
-                            </div>
-                            <div class="trend-point" style="--point-height: 45px; width: 45px; height: 45px; margin-bottom: -5px;">
-                                <div class="trend-label">Thu</div>
-                            </div>
-                            <div class="trend-point" style="--point-height: 50px; width: 50px; height: 50px; margin-bottom: -10px;">
-                                <div class="trend-label">Fri</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stats" style="margin-top: 20px;">
+            <div class="stats" style="margin-top: 30px;">
                 <div class="stat-box">
                     <div class="number">125K+</div>
-                    <div class="label">Deaths Annually</div>
+                    <div class="label">Deaths Annually (USA)</div>
                 </div>
                 <div class="stat-box">
-                    <div class="number">$100B+</div>
-                    <div class="label">Healthcare Costs</div>
+                    <div class="number">200K+</div>
+                    <div class="label">Deaths Annually (Europe)</div>
                 </div>
                 <div class="stat-box">
-                    <div class="number">50%</div>
-                    <div class="label">Non-Adherence Rate</div>
+                    <div class="number">$300B</div>
+                    <div class="label">Annual Healthcare Costs</div>
                 </div>
             </div>
-            
-            <p style="margin-top: 30px; font-size: clamp(1.1em, 2vw, 1.3em); font-style: italic; color: #666; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; border-left: 4px solid var(--primary);">
-                "A 65-year-old diabetic patient skips Furosemide 3 times in a week. Without early detection, this could lead to fluid accumulation in lungs and emergency hospitalization."
-            </p>
+
+            <div class="year-graph-container">
+                <div class="year-graph-title">📈 Medication Non-Adherence Impact Over Years</div>
+                <div class="year-graph">
+                    <div class="year-bar" style="--bar-height: 60%; height: 60%;">
+                        <div class="year-bar-value">100K</div>
+                        <div class="year-bar-label">2020</div>
+                    </div>
+                    <div class="year-bar" style="--bar-height: 70%; height: 70%;">
+                        <div class="year-bar-value">110K</div>
+                        <div class="year-bar-label">2021</div>
+                    </div>
+                    <div class="year-bar" style="--bar-height: 80%; height: 80%;">
+                        <div class="year-bar-value">120K</div>
+                        <div class="year-bar-label">2022</div>
+                    </div>
+                    <div class="year-bar" style="--bar-height: 90%; height: 90%;">
+                        <div class="year-bar-value">125K</div>
+                        <div class="year-bar-label">2023</div>
+                    </div>
+                    <div class="year-bar" style="--bar-height: 100%; height: 100%;">
+                        <div class="year-bar-value">125K+</div>
+                        <div class="year-bar-label">2024</div>
+                    </div>
+                </div>
+                <div class="graph-legend">
+                    <div class="legend-item">
+                        <div class="legend-color"></div>
+                        <span>Annual Deaths (USA)</span>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 0.75em; color: #999; margin-top: 15px; font-style: italic;">
+                    *Illustrative trend based on current statistics. Historical year-by-year data not available from sources.
+                </p>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <div class="feature-card" style="margin-bottom: 20px;">
+                    <h4 style="color: var(--danger); margin-bottom: 15px;">📊 The Reality</h4>
+                    <p style="font-size: clamp(1em, 1.5vw, 1.2em); line-height: 1.8; margin-bottom: 15px;">
+                        <strong>American Heart Association</strong> states: <em>"Poor medication adherence takes the lives of 125,000 Americans annually, and costs the health care system as much as $300 billion a year in additional medical appointments, emergency department visits and hospitalizations."</em>
+                    </p>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
+                        Source: <a href="https://www.heart.org/en/health-topics/consumer-healthcare/medication-information/medication-adherence-taking-your-meds-as-directed" target="_blank" style="color: var(--primary);">American Heart Association</a>
+                    </p>
+                </div>
+
+                <div class="feature-card" style="margin-bottom: 20px;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">🔬 Research Evidence</h4>
+                    <ul style="font-size: clamp(0.95em, 1.4vw, 1.1em); line-height: 1.8;">
+                        <li><strong>Widely Cited:</strong> The estimate of 125,000 deaths per year is widely cited in medical literature</li>
+                        <li><strong>European Impact:</strong> Almost 200,000 deaths annually associated with non-adherence in Europe</li>
+                        <li><strong>Chronic Conditions:</strong> Over 50% of medications prescribed for chronic diseases are not taken as directed</li>
+                    </ul>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 15px;">
+                        Sources: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6045499" target="_blank" style="color: var(--primary);">PMC Research</a> | 
+                        <a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/410956" target="_blank" style="color: var(--primary);">JAMA Internal Medicine</a>
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h4 style="color: var(--secondary); margin-bottom: 15px;">⚠️ Real-World Impact</h4>
+                    <p style="font-size: clamp(1em, 1.5vw, 1.2em); line-height: 1.8; font-style: italic; color: #666;">
+                        "A 65-year-old diabetic patient skips cardiac medication 3 times in a week. Without early detection, this could lead to fluid accumulation in lungs, elevated blood pressure, and emergency hospitalization."
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Slide 3: Solution -->
