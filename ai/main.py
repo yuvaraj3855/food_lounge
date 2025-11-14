@@ -9,13 +9,16 @@ from models.schemas import (
     RiskAnalysisResponse,
     VoiceTranscribeResponse,
     VoiceSynthesizeRequest,
-    VoiceSynthesizeResponse
+    VoiceSynthesizeResponse,
+    TranslationRequest,
+    TranslationResponse
 )
 from services.medgemma_service import MedGemmaService
 from services.bge_service import BGEService
 from services.drug_service import DrugService
 from services.stt_service import STTService
 from services.tts_service import TTSService
+from services.translation_service import TranslationService
 
 app = FastAPI(title="MedMentor AI Service", version="1.0.0")
 
@@ -34,6 +37,7 @@ bge_service = BGEService()
 drug_service = DrugService()
 stt_service = STTService()
 tts_service = TTSService()
+translation_service = TranslationService()
 
 
 @app.get("/")
@@ -157,6 +161,29 @@ async def get_drug(drug_name: str):
     if not drug:
         raise HTTPException(status_code=404, detail=f"Drug '{drug_name}' not found")
     return drug
+
+
+@app.post("/translate", response_model=TranslationResponse)
+async def translate_text(request: TranslationRequest):
+    """
+    Translate text using Sarvam Translation API
+    Supports translation between English and Indian languages (Hindi, Tamil, Telugu, etc.)
+    Uses Sarvam translation service at http://10.11.7.65:8092
+    """
+    try:
+        result = translation_service.translate(
+            text=request.text,
+            target_language=request.target_language,
+            source_language=request.source_language
+        )
+        
+        return TranslationResponse(
+            text=result["text"],
+            source_language=result["source_language"],
+            target_language=result["target_language"]
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error translating text: {str(e)}")
 
 
 if __name__ == "__main__":

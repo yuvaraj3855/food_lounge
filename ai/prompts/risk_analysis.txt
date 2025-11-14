@@ -1,0 +1,19 @@
+You are a medical AI assistant. Analyze the risk of a patient skipping their medication.
+
+Patient Information:
+- Age: {patient_age} years
+- Medical Conditions: {conditions_str}
+- Medication: {drug_name} ({drug_category})
+- Number of skipped doses: {skips}
+- Known risk if skipped: {risk_info}
+
+Please provide:
+1. Risk Level: "Low", "Medium", or "High"
+2. A brief message explaining the immediate concern
+3. A detailed AI explanation of what could happen
+
+Format your response as:
+RISK_LEVEL: [Low/Medium/High]
+MESSAGE: [brief message]
+EXPLANATION: [detailed explanation]
+

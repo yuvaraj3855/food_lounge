@@ -25,24 +25,30 @@ poetry shell
 4. Set environment variables (create `.env` file):
 ```bash
 # Ollama Configuration
-OLLAMA_BASE_URL=http://localhost:11434
-GEMMA_MODEL=gemma:4b
-BGE_MODEL=bge-large
+OLLAMA_BASE_URL=http://10.11.7.65:11434
+GEMMA_MODEL=gemma3:4b
+# Alternative: GEMMA_MODEL=gemma3:27b (for more powerful analysis)
+BGE_MODEL=bge-m3:latest
 
-# Sarvam AI Configuration (for Indian language STT/TTS)
-SARVAM_API_KEY=your_sarvam_api_key_here
-SARVAM_BASE_URL=https://api.sarvam.ai
+# Whisper API Configuration (for STT - Speech to Text)
+WHISPER_API_URL=http://10.10.110.24:40004
+WHISPER_MODEL=whisper-large-v3
+
+# Sarvam Base URL (for TTS and Translation)
+# Same URL for both Sarvam TTS and Translation services
+SARVAM_BASE_URL=http://10.11.7.65:8092
+
+# Sarvam API Key (optional, if required by your Sarvam setup)
+# SARVAM_API_KEY=your_sarvam_api_key_here
 
 # Drug Dataset Path (optional, defaults to ai/data/drugs_sample.json)
-DRUG_DATASET_PATH=path/to/your/drugs.json
+# DRUG_DATASET_PATH=path/to/your/drugs.json
 ```
 
-3. Ensure Ollama is running with Gemma and BGE models:
-```bash
-# Pull models if not already available
-ollama pull gemma:4b
-ollama pull bge-large
-```
+**Note:** The Ollama server is configured at `http://10.11.7.65:11434` with the following models available:
+- `gemma3:4b` - For medication risk analysis
+- `gemma3:27b` - Alternative (more powerful) model
+- `bge-m3:latest` - For drug similarity embeddings
 
 4. Place your drug dataset JSON file at the configured path (or use default location).
 
@@ -85,6 +91,7 @@ poetry export -f requirements.txt --output requirements.txt --without-hashes
 - `POST /analyze_skip` - Analyze medication skip risk
 - `POST /voice/transcribe` - Transcribe audio (WAV) to text
 - `POST /voice/synthesize` - Synthesize text to speech
+- `POST /translate` - Translate text between languages
 - `GET /drugs` - List all drugs
 - `GET /drugs/{drug_name}` - Get specific drug information
 

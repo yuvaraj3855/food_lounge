@@ -34,3 +34,15 @@ class VoiceSynthesizeRequest(BaseModel):
 class VoiceSynthesizeResponse(BaseModel):
     audio_url: str  # Path to generated audio file
 
+
+class TranslationRequest(BaseModel):
+    text: str
+    target_language: str  # Language code (e.g., "ta", "hi", "en") or full name (e.g., "Tamil", "Hindi")
+    source_language: str = "auto"  # "auto" for auto-detect, or specific language code/name
+
+
+class TranslationResponse(BaseModel):
+    text: str  # Translated text
+    source_language: str
+    target_language: str
+

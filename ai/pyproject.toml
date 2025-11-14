@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "MedMentor AI Service - FastAPI service for medication risk analysis, STT/TTS, and drug intelligence"
 authors = ["MedMentor Team"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -23,6 +24,7 @@ ruff = "^0.4.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.scripts]
-start = "uvicorn main:app --reload --port 8000"
+# Note: Scripts don't work with package-mode = false
+# Use: poetry run uvicorn main:app --reload --port 8000 --host 0.0.0.0
+# Or: ./run.sh
 

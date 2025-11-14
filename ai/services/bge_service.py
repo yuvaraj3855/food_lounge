@@ -5,8 +5,8 @@ import os
 
 class BGEService:
     def __init__(self, ollama_base_url: str = None):
-        self.ollama_base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-        self.model_name = os.getenv("BGE_MODEL", "bge-large")
+        self.ollama_base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://10.11.7.65:11434")
+        self.model_name = os.getenv("BGE_MODEL", "bge-m3:latest")
 
     def get_embedding(self, text: str) -> List[float]:
         """Get embedding for text using Ollama BGE model"""

@@ -1,12 +1,13 @@
 import requests
 import os
 from typing import Dict
+from prompts.risk_analysis_prompt import RiskAnalysisPrompt
 
 
 class MedGemmaService:
     def __init__(self, ollama_base_url: str = None):
-        self.ollama_base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-        self.model_name = os.getenv("GEMMA_MODEL", "gemma:4b")
+        self.ollama_base_url = ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://10.11.7.65:11434")
+        self.model_name = os.getenv("GEMMA_MODEL", "gemma3:4b")
 
     def analyze_skip_risk(
         self,
@@ -20,29 +21,17 @@ class MedGemmaService:
         Analyze risk of skipping medication using Ollama Gemma model
         Returns: {risk_level, message, ai_explanation}
         """
-        # Build prompt for risk analysis
-        conditions_str = ", ".join(conditions) if conditions else "no specific conditions"
-        drug_category = drug_info.get("category", "Unknown") if drug_info else "Unknown"
-        risk_info = drug_info.get("risk_if_skipped", "Unknown risk") if drug_info else "Unknown risk"
+        # Create prompt using class-based approach with validation
+        prompt_obj = RiskAnalysisPrompt.from_drug_info(
+            patient_age=patient_age,
+            drug_name=drug_name,
+            skips=skips,
+            conditions=conditions,
+            drug_info=drug_info
+        )
         
-        prompt = f"""You are a medical AI assistant. Analyze the risk of a patient skipping their medication.
-
-Patient Information:
-- Age: {patient_age} years
-- Medical Conditions: {conditions_str}
-- Medication: {drug_name} ({drug_category})
-- Number of skipped doses: {skips}
-- Known risk if skipped: {risk_info}
-
-Please provide:
-1. Risk Level: "Low", "Medium", or "High"
-2. A brief message explaining the immediate concern
-3. A detailed AI explanation of what could happen
-
-Format your response as:
-RISK_LEVEL: [Low/Medium/High]
-MESSAGE: [brief message]
-EXPLANATION: [detailed explanation]"""
+        # Format the prompt (validates and formats automatically)
+        prompt = prompt_obj.format()
 
         try:
             response = requests.post(
@@ -52,7 +41,7 @@ EXPLANATION: [detailed explanation]"""
                     "prompt": prompt,
                     "stream": False,
                     "options": {
-                        "temperature": 0.3,
+                        "temperature": 0.1,
                         "top_p": 0.9
                     }
                 },

@@ -7,11 +7,13 @@ from pathlib import Path
 
 class TTSService:
     def __init__(self, sarvam_api_key: str = None, sarvam_base_url: str = None, output_dir: str = None):
+        # Sarvam Base URL (same for TTS and translation)
+        self.sarvam_base_url = sarvam_base_url or os.getenv("SARVAM_BASE_URL", "http://10.11.7.65:8092")
         self.sarvam_api_key = sarvam_api_key or os.getenv("SARVAM_API_KEY", "")
-        self.sarvam_base_url = sarvam_base_url or os.getenv("SARVAM_BASE_URL", "https://api.sarvam.ai")
         self.output_dir = output_dir or os.path.join(Path(__file__).parent.parent, "output", "audio")
         os.makedirs(self.output_dir, exist_ok=True)
-        self.use_sarvam = bool(self.sarvam_api_key)
+        # Use Sarvam if base URL is configured (API key optional for some endpoints)
+        self.use_sarvam = bool(self.sarvam_base_url and self.sarvam_base_url != "http://localhost:8092")
 
     def synthesize_speech(self, text: str, language: str = "hi") -> str:
         """
@@ -42,12 +44,16 @@ class TTSService:
             }
             sarvam_lang = language_map.get(language, "hi")
 
+            # Build headers (API key may be optional depending on Sarvam setup)
+            headers = {
+                "Content-Type": "application/json"
+            }
+            if self.sarvam_api_key:
+                headers["Authorization"] = f"Bearer {self.sarvam_api_key}"
+            
             response = requests.post(
                 f"{self.sarvam_base_url}/v1/audio/speech",
-                headers={
-                    "Authorization": f"Bearer {self.sarvam_api_key}",
-                    "Content-Type": "application/json"
-                },
+                headers=headers,
                 json={
                     "text": text,
                     "language": sarvam_lang,
