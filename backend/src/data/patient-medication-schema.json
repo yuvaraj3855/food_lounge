@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Patient with Medication Data",
+  "description": "Schema for patient details with medication information",
+  "type": "object",
+  "properties": {
+    "patient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique patient identifier (UUID)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Patient full name"
+        },
+        "age": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 150,
+          "description": "Patient age in years"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of medical conditions"
+        },
+        "current_medications": {
+          "type": "array",
+          "description": "List of medications prescribed to the patient",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug_name": {
+                "type": "string",
+                "description": "Name of the medication"
+              },
+              "dosage": {
+                "type": "string",
+                "description": "Dosage amount (e.g., '40mg', '500mg', '20 units')"
+              },
+              "frequency": {
+                "type": "string",
+                "enum": ["once daily", "twice daily", "thrice daily", "as needed"],
+                "description": "How often to take the medication"
+              },
+              "timing": {
+                "type": "string",
+                "description": "When to take the medication (e.g., 'morning', 'evening', 'with meals')"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Reason for prescribing this medication"
+              },
+              "risk_level": {
+                "type": "string",
+                "enum": ["Low", "Medium", "High"],
+                "description": "Risk level if this medication is skipped (Low, Medium, or High)"
+              }
+            },
+            "required": ["drug_name", "dosage", "frequency", "risk_level"]
+          }
+        },
+        "doctor_id": {
+          "type": "string",
+          "description": "ID of the assigned doctor"
+        }
+      },
+      "required": ["name", "age", "conditions", "current_medications", "doctor_id"]
+    }
+  }
+}
+

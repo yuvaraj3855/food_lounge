@@ -1,0 +1,152 @@
+{
+  "patients": [
+    {
+      "id": "patient-001",
+      "name": "Rajesh Kumar",
+      "age": 63,
+      "conditions": ["Type 2 Diabetes", "Heart Failure", "Hypertension"],
+      "current_medications": [
+        {
+          "drug_name": "Furosemide",
+          "dosage": "40mg",
+          "frequency": "twice daily",
+          "timing": "morning and evening",
+          "purpose": "Diuretic for heart failure",
+          "risk_level": "High"
+        },
+        {
+          "drug_name": "Metformin",
+          "dosage": "500mg",
+          "frequency": "twice daily",
+          "timing": "with meals",
+          "purpose": "Blood sugar control",
+          "risk_level": "Medium"
+        },
+        {
+          "drug_name": "Lisinopril",
+          "dosage": "10mg",
+          "frequency": "once daily",
+          "timing": "morning",
+          "purpose": "ACE inhibitor for blood pressure",
+          "risk_level": "High"
+        }
+      ],
+      "doctor_id": "doctor-1"
+    },
+    {
+      "id": "patient-002",
+      "name": "Priya Sharma",
+      "age": 58,
+      "conditions": ["Hypertension", "High Cholesterol"],
+      "current_medications": [
+        {
+          "drug_name": "Amlodipine",
+          "dosage": "5mg",
+          "frequency": "once daily",
+          "timing": "morning",
+          "purpose": "Calcium channel blocker for blood pressure",
+          "risk_level": "High"
+        },
+        {
+          "drug_name": "Atorvastatin",
+          "dosage": "20mg",
+          "frequency": "once daily",
+          "timing": "evening",
+          "purpose": "Cholesterol management",
+          "risk_level": "Low"
+        }
+      ],
+      "doctor_id": "doctor-1"
+    },
+    {
+      "id": "patient-003",
+      "name": "Suresh Patel",
+      "age": 71,
+      "conditions": ["Atrial Fibrillation", "History of Stroke"],
+      "current_medications": [
+        {
+          "drug_name": "Warfarin",
+          "dosage": "5mg",
+          "frequency": "once daily",
+          "timing": "evening",
+          "purpose": "Blood thinner to prevent stroke",
+          "risk_level": "High"
+        },
+        {
+          "drug_name": "Digoxin",
+          "dosage": "0.25mg",
+          "frequency": "once daily",
+          "timing": "morning",
+          "purpose": "Heart rate control",
+          "risk_level": "High"
+        }
+      ],
+      "doctor_id": "doctor-1"
+    },
+    {
+      "id": "patient-004",
+      "name": "Lakshmi Devi",
+      "age": 65,
+      "conditions": ["Type 2 Diabetes", "Hypothyroidism"],
+      "current_medications": [
+        {
+          "drug_name": "Insulin Glargine",
+          "dosage": "20 units",
+          "frequency": "once daily",
+          "timing": "evening before bed",
+          "purpose": "Long-acting insulin",
+          "risk_level": "High"
+        },
+        {
+          "drug_name": "Levothyroxine",
+          "dosage": "75mcg",
+          "frequency": "once daily",
+          "timing": "morning on empty stomach",
+          "purpose": "Thyroid hormone replacement",
+          "risk_level": "Low"
+        }
+      ],
+      "doctor_id": "doctor-1"
+    },
+    {
+      "id": "patient-005",
+      "name": "Vikram Singh",
+      "age": 55,
+      "conditions": ["Coronary Artery Disease", "Post Heart Attack"],
+      "current_medications": [
+        {
+          "drug_name": "Aspirin",
+          "dosage": "100mg",
+          "frequency": "once daily",
+          "timing": "morning",
+          "purpose": "Blood thinner to prevent heart attack",
+          "risk_level": "High"
+        },
+        {
+          "drug_name": "Clopidogrel",
+          "dosage": "75mg",
+          "frequency": "once daily",
+          "timing": "morning",
+          "purpose": "Anti-platelet medication",
+          "risk_level": "High"
+        },
+        {
+          "drug_name": "Atorvastatin",
+          "dosage": "40mg",
+          "frequency": "once daily",
+          "timing": "evening",
+          "purpose": "Cholesterol and heart protection",
+          "risk_level": "High"
+        }
+      ],
+      "doctor_id": "doctor-1"
+    }
+  ],
+  "doctor": {
+    "id": "doctor-1",
+    "name": "Dr. Anjali Mehta",
+    "email": "dr.mehta@medmentor.ai",
+    "specialization": "Cardiologist"
+  }
+}
+

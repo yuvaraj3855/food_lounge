@@ -1,0 +1,95 @@
+{
+  "examples": {
+    "basic_patient": {
+      "description": "Basic patient creation (minimum required fields)",
+      "payload": {
+        "name": "Rajesh Kumar",
+        "age": 63,
+        "conditions": ["Type 2 Diabetes", "Heart Failure"],
+        "current_medications": ["Furosemide", "Metformin", "Lisinopril"],
+        "doctor_id": "doctor-1"
+      }
+    },
+    "patient_with_medication_details": {
+      "description": "Patient with detailed medication information",
+      "payload": {
+        "name": "Rajesh Kumar",
+        "age": 63,
+        "conditions": ["Type 2 Diabetes", "Heart Failure", "Hypertension"],
+        "current_medications": ["Furosemide", "Metformin", "Lisinopril"],
+        "doctor_id": "doctor-1",
+        "medication_details": [
+          {
+            "drug_name": "Furosemide",
+            "dosage": "40mg",
+            "frequency": "twice daily",
+            "timing": "morning and evening",
+            "purpose": "Diuretic for heart failure - removes excess fluid",
+            "risk_level": "High",
+            "instructions": "Take with food to reduce stomach upset"
+          },
+          {
+            "drug_name": "Metformin",
+            "dosage": "500mg",
+            "frequency": "twice daily",
+            "timing": "with meals",
+            "purpose": "Controls blood sugar levels",
+            "risk_level": "Medium",
+            "instructions": "Take with breakfast and dinner"
+          },
+          {
+            "drug_name": "Lisinopril",
+            "dosage": "10mg",
+            "frequency": "once daily",
+            "timing": "morning",
+            "purpose": "Lowers blood pressure and protects heart",
+            "risk_level": "High",
+            "instructions": "Take at the same time each day"
+          }
+        ]
+      }
+    },
+    "patient_all_risk_levels": {
+      "description": "Example showing all 3 risk levels (Low, Medium, High)",
+      "payload": {
+        "name": "Priya Sharma",
+        "age": 58,
+        "conditions": ["Hypertension", "High Cholesterol"],
+        "current_medications": ["Amlodipine", "Atorvastatin"],
+        "doctor_id": "doctor-1",
+        "medication_details": [
+          {
+            "drug_name": "Amlodipine",
+            "dosage": "5mg",
+            "frequency": "once daily",
+            "timing": "morning",
+            "purpose": "Calcium channel blocker for blood pressure",
+            "risk_level": "High"
+          },
+          {
+            "drug_name": "Atorvastatin",
+            "dosage": "20mg",
+            "frequency": "once daily",
+            "timing": "evening",
+            "purpose": "Cholesterol management",
+            "risk_level": "Low"
+          }
+        ]
+      }
+    }
+  },
+  "endpoint": "POST /patient",
+  "required_fields": [
+    "name",
+    "age",
+    "conditions",
+    "current_medications"
+  ],
+  "optional_fields": [
+    "doctor_id",
+    "medication_details"
+  ],
+  "risk_levels": ["Low", "Medium", "High"],
+  "frequency_options": ["once daily", "twice daily", "thrice daily", "as needed"]
+}
+

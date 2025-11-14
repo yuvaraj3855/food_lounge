@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "medmentor-ai"
+version = "1.0.0"
+description = "MedMentor AI Service - FastAPI service for medication risk analysis, STT/TTS, and drug intelligence"
+authors = ["MedMentor Team"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+pydantic = "^2.9.2"
+requests = "^2.32.3"
+python-multipart = "^0.0.12"
+aiofiles = "^24.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.0.0"
+ruff = "^0.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "uvicorn main:app --reload --port 8000"
+
