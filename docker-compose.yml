@@ -7,21 +7,37 @@ services:
     container_name: ai-service-food-lounge
     env_file:
       - ai/.env
+
+    volumes:
+      - $HF_HOME:/root/.cache/huggingface
+
     networks:
       - food-lounge-net
+
+    ports:
+      - 8000:8000
+
     restart: unless-stopped
 
-#  backend-service:
-#    build:
-#      context: ./backend
-#      dockerfile: Dockerfile
-#    image: backend-service:food-lounge
-#    container_name: backend-service-food-lounge
-#    env_file:
-#      - backend/.env
-#    networks:
-#      - food-lounge-net
-#    restart: unless-stopped
+  backend-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    depends_on:
+      - ai-service
+    image: backend-service:food-lounge
+    container_name: backend-service-food-lounge
+    env_file:
+      - backend/.env
+
+    ports:
+      - 8001:3000
+
+    networks:
+      - food-lounge-net
+
+    restart: unless-stopped
 #
 #  frontend-service:
 #    build:
